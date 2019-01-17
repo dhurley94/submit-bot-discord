@@ -1,3 +1,4 @@
-config/config.json
-.env
-node_modules/
+website/php_creds.php
+submit-bot/.env
+submit-bot/node_modules
+submit-bot/config/config.json

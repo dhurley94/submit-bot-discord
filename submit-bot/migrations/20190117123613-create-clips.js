@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Clips', {
+    return queryInterface.createTable("Clips", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -15,7 +15,8 @@ module.exports = {
         type: Sequelize.TEXT
       },
       upvotes: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        default: 0
       },
       createdAt: {
         allowNull: false,
@@ -28,6 +29,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Clips');
+    return queryInterface.dropTable("Clips");
   }
 };
