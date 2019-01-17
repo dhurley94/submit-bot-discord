@@ -20,8 +20,8 @@ client.on("message", msg => {
         );
         if (checkValid) {
             Clips.create({
-                    username: msg.author,
-                    clip_url: explodeContent[1]
+                    username: msg.author.toString(),
+                    clip_url: explodeContent[1].toString()
                 })
                 .then(result => {
                     msg.reply("this clip has been submitted.");
@@ -30,15 +30,23 @@ client.on("message", msg => {
                     console.log(error, 'failed to write to database.')
                 })
 
+        } else {
+            msg.reply('This is not a twitch clip.')
         }
-    }
+    } 
     if (explodeContent[0] === "!submitted") {
         Clips.findAll({
-            raw: true
+            raw: true,
+            limit: 10
         })
         .then(users => {
             console.log(users)
-            msg.reply(users.toJSON());
+
+            let topTen = '';
+            for (user in users) {
+                topTen += user.username + '\n'
+            }
+            msg.reply(topTen)
         })
     }
 });
