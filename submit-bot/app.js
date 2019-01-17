@@ -11,14 +11,20 @@ client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
+/**
+ *
+ */
 client.on("message", msg => {
   const content = msg.content;
   const explodeContent = content.split(" ");
   if (explodeContent[0] === "!submit") {
-    const checkValid = /^(https):\/\/www.twitch.tv[^ "]+$/.test(
+    const checkValid_one = /^(https):\/\/www.twitch.tv\/(.*)\/clip[^ "]+$/.test(
       explodeContent[1]
     );
-    if (checkValid) {
+    const checkValid_two = /^(https):\/\/clips.twitch.tv\/[^ "]+$/.test(
+      explodeContent[1]
+    );
+    if (checkValid_one || checkValid_two) {
       Clips.create({
         username: msg.author.username.toString(),
         clip_url: explodeContent[1].toString()
