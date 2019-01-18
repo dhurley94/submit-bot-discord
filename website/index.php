@@ -13,7 +13,7 @@
 include('./php_creds.php');
 
 echo "<table style='border: solid 1px black;'>";
-echo "<tr><th>Id</th><th>Username</th><th>Clip</th><th>Date Posted</th></tr>";
+echo "<tr><th>Id</th><th>Username</th><th>Clip</th><th>Date Posted</th><th>Upvote</th></tr>";
 
 class TableRows extends RecursiveIteratorIterator
 {
@@ -34,7 +34,7 @@ class TableRows extends RecursiveIteratorIterator
 
     function endChildren()
     {
-        echo "</tr>" . "\n";
+        echo "<td><a href='/upvote/'><button>+</button></a></td></tr>" . "\n";
     }
 }
 

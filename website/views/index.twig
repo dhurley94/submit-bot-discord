@@ -1,0 +1,18 @@
+{% extends 'layout.twig' %} {% block body %}
+<h1>{{ title }}</h1>
+<p>Welcome to {{ title }}</p>
+<div class="card-group">
+  {% for clip in clips %}
+  <div class="card" style="width: 18rem;">
+    <img class="card-img-top" src="..." alt="Card image cap" />
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">
+        submitted by {{ clip.username }} at {{ clip.createdAt }}
+      </p>
+      <a href="/upvote/{{ clip.id }}" class="btn btn-primary">Upvote</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
