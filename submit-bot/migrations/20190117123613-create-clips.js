@@ -9,13 +9,21 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       username: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      message_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       clip_url: {
+        allowNull: false,
+        unique: true,
         type: Sequelize.TEXT
       },
-      upvotes: {
+      reactions: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         default: 0
       },
       createdAt: {

@@ -1,21 +1,19 @@
-const discord = require("discord.js");
+const Discord = require("discord.js");
 const db = require("./models/");
 const Clips = require("./models").Clips;
 const dotenv = require("dotenv");
-const Collection = require('./utils/Collection')
+// const Collection = require("./utils/Collection");
+// const PREFIX = "!";
 
 dotenv.config("./.env");
 
-const client = new discord.Client();
+const client = new Discord.Client();
 
-client.on("ready", () => {
+client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-/**
- *
- */
-client.on("message", msg => {
+client.on("message", async msg => {
   const content = msg.content;
   const explodeContent = content.split(" ");
   if (explodeContent[0] === "!submit") {
@@ -28,29 +26,53 @@ client.on("message", msg => {
     if (checkValid_one || checkValid_two) {
       Clips.create({
         username: msg.author.username.toString(),
-        clip_url: explodeContent[1].toString() //<iframe src="https://clips.twitch.tv/embed?clip=FaintNurturingBibimbapKreygasm" frameborder="0" allowfullscreen="true" height="378" width="620"></iframe>
+        message_id: msg.id,
+        clip_url: explodeContent[1].toString()
       })
         .then(result => {
           msg.reply("this clip has been submitted.");
+          const filter = (reaction, user) => {
+            return (
+              ["👍", "👎"].includes(reaction.emoji.name) &&
+              user.id === msg.author.id
+            );
+          };
+
+          msg
+            .awaitReactions(filter, { max: 1, time: 600000, errors: ["time"] })
+            .then(collected => {
+              const reaction = collected.first();
+
+              if (reaction.emoji.name === "👍") {
+                msg.reply("+1 to clip " + explodeContent[1].toString());
+                Clips.update(
+                  { reaction: (reaction += 1) },
+                  { where: { username: msg.author.username.toString() } }
+                ).catch(error => {
+                  console.log(error);
+                });
+              }
+            })
+            .catch(collected => {
+              console.log(`Collected ${collected.size} upvotes.`);
+            });
         })
         .catch(error => {
-          console.log(error, "failed to write to database.");
+          console.log(error);
         });
-        this.reactions = new Collection();
-        if (msg.reactions && msg.reactions.length > 0) {
-          for (const reaction of msg.reactions) {
-            const id = reaction.emoji.id ? `${reaction.emoji.name}:${reaction.emoji.id}` : reaction.emoji.name;
-            this.reactions.set(id, new MessageReaction(this, reaction.emoji, reaction.count, reaction.me));
-          }
-        }
     } else {
-      msg.reply("This is not a twitch clip.");
+      msg.reply("this is not a twitch clip.");
     }
+  }
+  if (explodeContent[0] === "!submitted") {
+    Clips.findAll({ limit: 10 }).then(results => {
+      console.log(results);
+    });
   }
 });
 
 client.login(process.env.TOKEN);
 
 db.sequelize.sync({
-  force: false
+  force: true
 });
