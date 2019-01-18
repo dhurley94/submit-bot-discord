@@ -8,4 +8,4 @@ Basic twitch bot still a lot of work todo
 
 ## website
 
-Simple php site to display leaderboard
+Simple node.js / twig site to clips & leaderboard

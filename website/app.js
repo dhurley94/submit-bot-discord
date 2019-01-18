@@ -17,20 +17,37 @@ app.set("view engine", "twig");
 
 app.use(logger("dev"));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/upvote/:id", usersRouter);
+
+app.get('/upvote/:user_id', function (req, res, next) {
+  Clips.findOne({
+    upvotes: Clips.upvotes++
+  }, {
+    where: {
+      id: req.params.user_id
+    }
+  }).then(record => {
+    record.update({
+      id: record.upvotes++
+    })
+  }).then(record => {
+    res.redirect('/')
+  })
+});
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
