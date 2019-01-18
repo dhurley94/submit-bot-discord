@@ -27,7 +27,7 @@ client.on("message", msg => {
     if (checkValid_one || checkValid_two) {
       Clips.create({
         username: msg.author.username.toString(),
-        clip_url: explodeContent[1].toString()
+        clip_url: explodeContent[1].toString() //<iframe src="https://clips.twitch.tv/embed?clip=FaintNurturingBibimbapKreygasm" frameborder="0" allowfullscreen="true" height="378" width="620"></iframe>
       })
         .then(result => {
           msg.reply("this clip has been submitted.");
@@ -40,12 +40,6 @@ client.on("message", msg => {
     }
   }
   if (explodeContent[0] === "!submitted") {
-    Clips.findAll({
-      raw: true,
-      limit: 10
-    }).then(users => {
-      msg.reply(users[0].id, " | ", users[0].username);
-    });
   }
 });
 

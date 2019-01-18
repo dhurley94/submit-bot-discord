@@ -2,3 +2,6 @@ website/php_creds.php
 submit-bot/.env
 submit-bot/node_modules
 submit-bot/config/config.json
+website/.env
+website/config/config.json
+website/index.php
