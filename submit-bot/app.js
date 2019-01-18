@@ -2,6 +2,7 @@ const discord = require("discord.js");
 const db = require("./models/");
 const Clips = require("./models").Clips;
 const dotenv = require("dotenv");
+const Collection = require('./utils/Collection')
 
 dotenv.config("./.env");
 
@@ -35,11 +36,16 @@ client.on("message", msg => {
         .catch(error => {
           console.log(error, "failed to write to database.");
         });
+        this.reactions = new Collection();
+        if (msg.reactions && msg.reactions.length > 0) {
+          for (const reaction of msg.reactions) {
+            const id = reaction.emoji.id ? `${reaction.emoji.name}:${reaction.emoji.id}` : reaction.emoji.name;
+            this.reactions.set(id, new MessageReaction(this, reaction.emoji, reaction.count, reaction.me));
+          }
+        }
     } else {
       msg.reply("This is not a twitch clip.");
     }
-  }
-  if (explodeContent[0] === "!submitted") {
   }
 });
 
