@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     "Clips",
     {
       username: DataTypes.STRING,
+      clip_title: DataTypes.STRING,
       message_id: DataTypes.STRING,
       clip_url: DataTypes.TEXT,
       reactions: DataTypes.INTEGER

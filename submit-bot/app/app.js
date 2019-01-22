@@ -25,10 +25,11 @@ client.on("message", async msg => {
     );
     if (checkValid_one || checkValid_two) {
       Clips.create({
-        username: msg.author.username.toString(),
-        message_id: msg.id,
-        clip_url: explodeContent[1].toString()
-      })
+          username: msg.author.username.toString(),
+          clip_title: explodeContent[2].toString(),
+          message_id: msg.id,
+          clip_url: explodeContent[1].toString()
+        })
         .then(result => {
           msg.reply(
             "this clip has been submitted.\nview it here https://blog-dhurley.herokuapp.com/"
@@ -41,16 +42,23 @@ client.on("message", async msg => {
           };
 
           msg
-            .awaitReactions(filter, { max: 1, time: 600000, errors: ["time"] })
+            .awaitReactions(filter, {
+              max: 1,
+              time: 600000,
+              errors: ["time"]
+            })
             .then(collected => {
               const reaction = collected.first();
 
               if (reaction.emoji.name === "👍") {
                 msg.reply("+1 to clip " + explodeContent[1].toString());
-                Clips.update(
-                  { reaction: (reaction += 1) },
-                  { where: { username: msg.author.username.toString() } }
-                ).catch(error => {
+                Clips.update({
+                  reactions: (reaction += 1)
+                }, {
+                  where: {
+                    username: msg.author.username.toString()
+                  }
+                }).catch(error => {
                   console.log(error);
                 });
               }
@@ -67,8 +75,12 @@ client.on("message", async msg => {
     }
   }
   if (explodeContent[0] === "!submitted") {
-    Clips.findAll({ limit: 10 }).then(results => {
-      console.log(results);
+    Clips.findAll({
+      limit: 10
+    }).then(results => {
+      results.forEach(result => {
+        msg.reply("Upvotes: " + result.reactions + " | " + result.clip_title + " posted by " + result.username + " \n " + result.clip_url);
+      });
     });
   }
   if (explodeContent[0] === "!contest") {

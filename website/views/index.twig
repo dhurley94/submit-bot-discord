@@ -5,16 +5,14 @@
   {% for clip in clips %}
   <div class="card" style="width: 18rem; padding: 30px;">
     <div class="card-body">
-      <h5 class="card-title">{{ clip.message_id }}</h5>
+      <h5 class="card-title">{{ clip.clip_title }} - Upvotes: {{ clip.reactions }}</h5>
       <p class="card-text">
         Submitted by <b>{{ clip.username }}</b
         ><br /><br />
         at {{ clip.createdAt }}
       </p>
       <a href="/upvote/{{ clip.id }}" class="btn btn-primary">Upvote</a>
-      <a href="{{ clip.clip_url }}" target="_blank" class="btn btn-primary"
-        >View Link</a
-      >
+      <a href="{{ clip.clip_url }}" src="{{ clip.clip_url }}" class="lb-js"  class="btn btn-primary">View Clip</a>
     </div>
   </div>
   {% endfor %}

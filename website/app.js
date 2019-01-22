@@ -35,20 +35,14 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 
-app.get("/upvote/:user_id", function(req, res, next) {
-  Clips.findOne(
-    {
-      upvotes: Clips.upvotes++
-    },
-    {
-      where: {
-        id: req.params.user_id
-      }
-    }
-  )
+app.get("/upvote/:user_id", function (req, res, next) {
+  Clips.findOne({
+    where: {
+      id: req.params.user_id
+    }})
     .then(record => {
       record.update({
-        id: record.upvotes++
+        reactions: record.reactions += 1
       });
     })
     .then(record => {
@@ -57,12 +51,12 @@ app.get("/upvote/:user_id", function(req, res, next) {
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "production" ? err : {};
@@ -71,6 +65,12 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
+
+const getClientAddress = function (req) {
+  return (req.headers['x-forwarded-for'] || '').split(',')[0] 
+  || req.connection.remoteAddress;
+};
+
 
 db.sequelize.sync({
   force: false
