@@ -1,0 +1,9 @@
+{
+    "development": {
+      "username": "submit",
+      "password": "7UI6FjwncT8VI5u",
+      "database": "submit",
+      "host": "35.184.36.92",
+      "dialect": "mysql"
+    }
+}
