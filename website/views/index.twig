@@ -1,15 +1,28 @@
-{% extends 'layout.twig' %} {% block body %}
+{% extends 'layout.twig' %}{% block body %}
 <h1>{{ title }}</h1>
 <p>Welcome to {{ title }}</p>
 <div class="card-group">
   {% for clip in clips %}
   <div class="card" style="width: 18rem; padding: 30px;">
     <div class="card-body">
-      <h5 class="card-title"><iframe src="{{ clip.clip_url }}" frameborder="1" allowfullscreen="true" height="189" width="310"></iframe></h5>
+      <h5 class="card-title">
+        <iframe
+          src="{{ clip.clip_url }}"
+          frameborder="1"
+          allowfullscreen="true"
+          height="189"
+          width="310"
+        ></iframe>
+      </h5>
       <p class="card-text">
-        submitted by <b>{{ clip.username }}</b><br /><br /> at {{ clip.createdAt }}
+        submitted by <b>{{ clip.username }}</b
+        ><br /><br />
+        at {{ clip.createdAt }}
       </p>
-      <a href="/upvote/{{ clip.id }}" class="btn btn-primary">Upvote</a> <a href="{{ clip.clip_url }}" target="_blank" class="btn btn-primary">Direct Link</a>
+      <a href="/upvote/{{ clip.id }}" class="btn btn-primary">Upvote</a>
+      <a href="{{ clip.clip_url }}" target="_blank" class="btn btn-primary"
+        >Direct Link</a
+      >
     </div>
   </div>
   {% endfor %}

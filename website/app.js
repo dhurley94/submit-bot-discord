@@ -9,11 +9,19 @@ var Clips = require("./models").Clips;
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
+var Twig = require("twig"), // Twig module
+  twig = Twig.twig; // Render function
+
 var app = express();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "twig");
+
+app.set("twig options", {
+  allow_async: true, // Allow asynchronous compiling
+  strict_variables: false
+});
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -57,7 +65,7 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
+  res.locals.error = req.app.get("env") === "production" ? err : {};
 
   // render the error page
   res.status(err.status || 500);

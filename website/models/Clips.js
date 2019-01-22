@@ -4,8 +4,9 @@ module.exports = (sequelize, DataTypes) => {
     "Clips",
     {
       username: DataTypes.STRING,
+      message_id: DataTypes.STRING,
       clip_url: DataTypes.TEXT,
-      upvotes: DataTypes.INTEGER
+      reactions: DataTypes.INTEGER
     },
     {}
   );
