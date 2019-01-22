@@ -70,6 +70,10 @@ client.on("message", async msg => {
         .catch(error => {
           console.log(error);
         });
+    } else if( explodeContent[2] === 'undefined')  {
+      msg.reply('a title is required for submission.')
+    } else if(explodeContent.length <= 3) {
+      msg.reply('to many inputs.\n Please try again.')
     } else {
       msg.reply("this is not a twitch clip.");
     }
