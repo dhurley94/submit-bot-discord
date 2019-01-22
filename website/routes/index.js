@@ -5,6 +5,7 @@ var Clips = require("../models").Clips;
 /* GET home page. */
 router.get("/", function(req, res, next) {
   Clips.findAll({
+    raw: true,
     limit: 25
   })
     .then(result => {
@@ -13,10 +14,11 @@ router.get("/", function(req, res, next) {
         clips: result
       });
     })
-    .catch(error => {
+    .catch(errors => {
       res.render("error", {
         title: "Failed to render",
-        error: error
+        message: "Failed to render",
+        error: errors
       });
     });
 });

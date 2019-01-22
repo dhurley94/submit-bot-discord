@@ -1,0 +1,25 @@
+{
+  "name": "nodejs-discord-submit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "discord.js": "^11.4.2",
+    "dotenv": "^6.2.0",
+    "mysql": "^2.16.0",
+    "mysql2": "^1.6.4",
+    "sequelize": "^4.42.0",
+    "sequelize-cli": "^5.4.0",
+    "sequelize-mysql": "^1.7.0"
+  },
+  "engines": {
+    "node": "10.14.2"
+  }
+}

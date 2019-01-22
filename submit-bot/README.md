@@ -1,1 +1,3 @@
 # submit-bot-discord
+
+Dockerized

@@ -5,23 +5,15 @@
   {% for clip in clips %}
   <div class="card" style="width: 18rem; padding: 30px;">
     <div class="card-body">
-      <h5 class="card-title">
-        <iframe
-          src="{{ clip.clip_url }}"
-          frameborder="1"
-          allowfullscreen="true"
-          height="189"
-          width="310"
-        ></iframe>
-      </h5>
+      <h5 class="card-title">{{ clip.message_id }}</h5>
       <p class="card-text">
-        submitted by <b>{{ clip.username }}</b
+        Submitted by <b>{{ clip.username }}</b
         ><br /><br />
         at {{ clip.createdAt }}
       </p>
       <a href="/upvote/{{ clip.id }}" class="btn btn-primary">Upvote</a>
       <a href="{{ clip.clip_url }}" target="_blank" class="btn btn-primary"
-        >Direct Link</a
+        >View Link</a
       >
     </div>
   </div>

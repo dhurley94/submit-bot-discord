@@ -5,3 +5,7 @@ submit-bot/config/config.json
 website/.env
 website/config/config.json
 website/index.php
+submit-bot/app/config
+submit-bot/app/.env
+website/node_modules
+submit-bot/app/config/config.json
