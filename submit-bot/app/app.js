@@ -83,8 +83,8 @@ client.on("message", async msg => {
       });
     });
   }
-  if (explodeContent[0] === "!contest") {
-    msg.reply("this is a contest");
+  if (explodeContent[0] === "!info") {
+    msg.reply("https://github.com/dhurley94/submit-bot-discord \nhttps://blog-dhurley.herokuapp.com/\n\n Usage:\n\t !submit <clip_url> <title>");
   }
 });
 
