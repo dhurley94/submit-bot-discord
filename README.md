@@ -4,6 +4,8 @@
    Stores <clip_url> into SQL database
  * **!submitted**  
    Outputs top 10 clips
+ * **!info**  
+   Displays usage and leaderboard URL
 
 ## submit-bot
 
