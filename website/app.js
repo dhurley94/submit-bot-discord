@@ -4,10 +4,21 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var db = require("./models");
-var Clips = require("./models").Clips;
+
+var session = require("express-session");
+var passport = require("passport");
+var Strategy = require("./lib").Strategy;
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
 
 var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
+var upvoteRouter = require("./routes/upvote");
+var authRouter = require("./routes/auth");
 
 var Twig = require("twig"), // Twig module
   twig = Twig.twig; // Render function
@@ -34,29 +45,16 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-
-app.get("/upvote/:user_id", function (req, res, next) {
-  Clips.findOne({
-    where: {
-      id: req.params.user_id
-    }})
-    .then(record => {
-      record.update({
-        reactions: record.reactions += 1
-      });
-    })
-    .then(record => {
-      res.redirect("/");
-    });
-});
+app.use("/upvote", upvoteRouter);
+app.use("/auth", authRouter);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "production" ? err : {};
@@ -66,11 +64,12 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-const getClientAddress = function (req) {
-  return (req.headers['x-forwarded-for'] || '').split(',')[0] 
-  || req.connection.remoteAddress;
+const getClientAddress = function(req) {
+  return (
+    (req.headers["x-forwarded-for"] || "").split(",")[0] ||
+    req.connection.remoteAddress
+  );
 };
-
 
 db.sequelize.sync({
   force: false

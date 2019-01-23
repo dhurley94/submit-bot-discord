@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 const PREFIX = "!";
 const express = require("express");
 const app = express();
-const port = 80;
+const port = 8080;
 
 app.get("/", (req, res) => res.send(200));
 
@@ -14,7 +14,7 @@ dotenv.config("./.env");
 
 const client = new Discord.Client();
 
-client.once("ready", () => {
+client.once({ channel: "bot-testing" }, () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
@@ -89,20 +89,24 @@ client.on("message", async msg => {
   if (explodeContent[0] === "!submitted") {
     Clips.findAll({
       limit: 10
-    }).then(results => {
-      results.forEach(result => {
-        msg.reply(
-          "Upvotes: " +
-            result.reactions +
-            " | " +
-            result.clip_title +
-            " posted by " +
-            result.username +
-            " \n " +
-            result.clip_url
-        );
+    })
+      .then(results => {
+        results.forEach(result => {
+          msg.reply(
+            "Upvotes: " +
+              result.reactions +
+              " | " +
+              result.clip_title +
+              " posted by " +
+              result.username +
+              " \n " +
+              result.clip_url
+          );
+        });
+      })
+      .catch(err => {
+        msg.reply("No content to display!");
       });
-    });
   }
   if (explodeContent[0] === "!info") {
     msg.reply(
@@ -113,9 +117,13 @@ client.on("message", async msg => {
 
 client.login(process.env.TOKEN);
 
+db.Clips.belongsTo(db.User);
+db.User.hasMany(db.Clips);
+
 db.sequelize.sync({
   force: false
 });
+
 app.listen(port, "localhost", () =>
   console.log(`app listening on port ${port}!`)
 );
