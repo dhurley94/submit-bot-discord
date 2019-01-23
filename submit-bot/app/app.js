@@ -3,7 +3,12 @@ const db = require("./models/");
 const Clips = require("./models").Clips;
 const dotenv = require("dotenv");
 // const Collection = require("./utils/Collection");
-// const PREFIX = "!";
+const PREFIX = "!";
+const express = require("express");
+const app = express();
+const port = 80;
+
+app.get("/", (req, res) => res.send(200));
 
 dotenv.config("./.env");
 
@@ -25,11 +30,11 @@ client.on("message", async msg => {
     );
     if (checkValid_one || checkValid_two) {
       Clips.create({
-          username: msg.author.username.toString(),
-          clip_title: explodeContent[2].toString(),
-          message_id: msg.id,
-          clip_url: explodeContent[1].toString()
-        })
+        username: msg.author.username.toString(),
+        clip_title: explodeContent[2].toString(),
+        message_id: msg.id,
+        clip_url: explodeContent[1].toString()
+      })
         .then(result => {
           msg.reply(
             "this clip has been submitted.\nview it here https://blog-dhurley.herokuapp.com/"
@@ -52,13 +57,16 @@ client.on("message", async msg => {
 
               if (reaction.emoji.name === "👍") {
                 msg.reply("+1 to clip " + explodeContent[1].toString());
-                Clips.update({
-                  reactions: (reaction += 1)
-                }, {
-                  where: {
-                    username: msg.author.username.toString()
+                Clips.update(
+                  {
+                    reactions: (reaction += 1)
+                  },
+                  {
+                    where: {
+                      username: msg.author.username.toString()
+                    }
                   }
-                }).catch(error => {
+                ).catch(error => {
                   console.log(error);
                 });
               }
@@ -70,10 +78,10 @@ client.on("message", async msg => {
         .catch(error => {
           console.log(error);
         });
-    } else if( explodeContent[2] === 'undefined')  {
-      msg.reply('a title is required for submission.')
-    } else if(explodeContent.length <= 3) {
-      msg.reply('to many inputs.\n Please try again.')
+    } else if (explodeContent[2] === "undefined") {
+      msg.reply("a title is required for submission.");
+    } else if (explodeContent.length <= 3) {
+      msg.reply("to many inputs.\n Please try again.");
     } else {
       msg.reply("this is not a twitch clip.");
     }
@@ -83,12 +91,23 @@ client.on("message", async msg => {
       limit: 10
     }).then(results => {
       results.forEach(result => {
-        msg.reply("Upvotes: " + result.reactions + " | " + result.clip_title + " posted by " + result.username + " \n " + result.clip_url);
+        msg.reply(
+          "Upvotes: " +
+            result.reactions +
+            " | " +
+            result.clip_title +
+            " posted by " +
+            result.username +
+            " \n " +
+            result.clip_url
+        );
       });
     });
   }
   if (explodeContent[0] === "!info") {
-    msg.reply("https://github.com/dhurley94/submit-bot-discord \nhttps://blog-dhurley.herokuapp.com/\n\n Usage:\n\t !submit <clip_url> <title>");
+    msg.reply(
+      "https://github.com/dhurley94/submit-bot-discord \nhttps://blog-dhurley.herokuapp.com/\n\n Usage:\n\t !submit <clip_url> <title>"
+    );
   }
 });
 
@@ -97,3 +116,6 @@ client.login(process.env.TOKEN);
 db.sequelize.sync({
   force: false
 });
+app.listen(port, "localhost", () =>
+  console.log(`app listening on port ${port}!`)
+);
