@@ -1,6 +1,9 @@
 {% extends 'layout.twig' %}{% block body %}
 <h1>{{ title }}</h1>
 <p>Welcome to {{ title }}</p>
+<ul>
+  <li><a href="/logout">Logout</a></li>
+</ul>
 <div class="card-group">
   {% for clip in clips %}
   <div class="card" style="width: 18rem; padding: 30px;">

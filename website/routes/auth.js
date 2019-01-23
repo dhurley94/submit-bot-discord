@@ -11,9 +11,9 @@ var scopes = ["identify", "email"];
 passport.use(
   new Strategy(
     {
-      clientID: "537478675847970816",
-      clientSecret: "1UD4vCMV6QLbPFkDNgZZNh567y-PL9tg",
-      callbackURL: "http://localhost:3000/auth/callback",
+      clientID: "",
+      clientSecret: "",
+      callbackURL: "http://localhost:5000/callback",
       scope: scopes
     },
     function(accessToken, refreshToken, profile, done) {
@@ -24,38 +24,31 @@ passport.use(
   )
 );
 
-router.use(
+app.use(
   session({
-    secret: "537478675847970816",
+    secret: "keyboard cat",
     resave: false,
     saveUninitialized: false
   })
 );
-router.use(passport.initialize());
-router.use(passport.session());
-router.get(
-  "/login",
-  passport.authenticate("discord", { scope: scopes }),
-  function(req, res) {}
-);
-router.get(
+app.use(passport.initialize());
+app.use(passport.session());
+router.get("/", passport.authenticate("discord", { scope: scopes }), function(
+  req,
+  res
+) {});
+app.get(
   "/callback",
   passport.authenticate("discord", { failureRedirect: "/" }),
   function(req, res) {
-    res.render("index", (res, req) => {});
+    res.redirect("/info");
   } // auth success
 );
-router.get("/logout", function(req, res) {
+app.get("/logout", function(req, res) {
   req.logout();
-  res.render("login", {
-    message: "Login",
-    msg: {
-      status: "logged out",
-      stack: "blah"
-    }
-  });
+  res.redirect("/");
 });
-router.get("/info", checkAuth, function(req, res) {
+app.get("/info", checkAuth, function(req, res) {
   //console.log(req.user)
   res.json(req.user);
 });

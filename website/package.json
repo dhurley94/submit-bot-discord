@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "body-parser": "^1.18.3",
+    "circular-json": "^0.5.9",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.16.0",
@@ -20,6 +21,7 @@
     "passport": "^0.4.0",
     "passport-discord": "^0.1.3",
     "passport-oauth2": "^1.4.0",
+    "passport-oauth2-refresh": "^1.1.0",
     "sequelize": "^4.42.0",
     "sequelize-mysql": "^1.7.0",
     "twig": "^0.10.3",
