@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       username: { type: Sequelize.STRING, allowNull: false },
       clip_url: { allowNull: false, type: Sequelize.TEXT },
       message_id: { allowNull: false, type: Sequelize.STRING },
-      clip_title: { allowNull: false, type: Sequelize.STRING },
+      casted_vote: { allowNull: true, type: Sequelize.STRING },
       reactions: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
       createdAt: { allowNull: false, type: Sequelize.DATE },
       updatedAt: { allowNull: false, type: Sequelize.DATE }

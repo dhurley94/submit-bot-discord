@@ -6,7 +6,6 @@ var bodyParser = require("body-parser");
 var logger = require("morgan");
 var db = require("./models");
 var Clips = require("./models").Clips;
-var Users = require("./models").Users;
 var JSON = require("circular-json");
 
 var app = express();
@@ -131,32 +130,6 @@ app.get("/upvote/:user_id", function(req, res) {
     .then(record => {
       res.redirect("/");
     });
-  // Users.findAll({
-  //   include: [
-  //     {
-  //       model: Clips
-  //     }
-  //   ]
-  // }).then(users => {
-  //   const resObj = users.map(user => {
-  //     //tidy up the user data
-  //     return Object.assign(
-  //       {},
-  //       {
-  //         username: user.username,
-  //         role: user.role
-  //       }
-  //     );
-  //   });
-  // });
-  // .then(record => {
-  //   record.update({
-  //     reactions: (record.reactions += 1)
-  //   });
-  // })
-  // .then(record => {
-  //   res.redirect("/");
-  // });
 });
 
 function checkAuth(req, res, next) {

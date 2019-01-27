@@ -8,7 +8,7 @@ const uuid = require("uuid/v3");
 
 dotenv.config("./.env");
 
-client.once({ channel: "bot-testing" }, () => {
+client.once({ channel: "general" }, () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
@@ -88,6 +88,6 @@ client.on("message", async msg => {
   }
 });
 
-db.sequelize.sync({ force: true });
+db.sequelize.sync({ force: false });
 
 client.login(process.env.TOKEN);

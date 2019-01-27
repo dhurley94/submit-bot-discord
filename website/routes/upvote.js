@@ -15,7 +15,8 @@ router.get("/:user_id", function(req, res) {
   })
     .then(record => {
       record.update({
-        reactions: (record.reactions += 1)
+        reactions: (record.reactions += 1),
+        casted_vote: record.username
       });
     })
     .then(record => {
