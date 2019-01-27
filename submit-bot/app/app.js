@@ -1,18 +1,12 @@
 const Discord = require("discord.js");
+const client = new Discord.Client();
+
 const db = require("./models/");
 const Clips = require("./models").Clips;
 const dotenv = require("dotenv");
-// const Collection = require("./utils/Collection");
-const PREFIX = "!";
-const express = require("express");
-const app = express();
-const port = 8080;
-
-app.get("/", (req, res) => res.send(200));
+const uuid = require("uuid/v3");
 
 dotenv.config("./.env");
-
-const client = new Discord.Client();
 
 client.once({ channel: "bot-testing" }, () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -31,56 +25,16 @@ client.on("message", async msg => {
     if (checkValid_one || checkValid_two) {
       Clips.create({
         username: msg.author.username.toString(),
-        clip_title: explodeContent[2].toString(),
-        message_id: msg.id,
-        clip_url: explodeContent[1].toString()
-      })
-        .then(result => {
-          msg.reply(
-            "this clip has been submitted.\nview it here https://blog-dhurley.herokuapp.com/"
-          );
-          const filter = (reaction, user) => {
-            return (
-              ["👍", "👎"].includes(reaction.emoji.name) &&
-              user.id === msg.author.id
-            );
-          };
-
-          msg
-            .awaitReactions(filter, {
-              max: 1,
-              time: 600000,
-              errors: ["time"]
-            })
-            .then(collected => {
-              const reaction = collected.first();
-
-              if (reaction.emoji.name === "👍") {
-                msg.reply("+1 to clip " + explodeContent[1].toString());
-                Clips.update(
-                  {
-                    reactions: (reaction += 1)
-                  },
-                  {
-                    where: {
-                      username: msg.author.username.toString()
-                    }
-                  }
-                ).catch(error => {
-                  console.log(error);
-                });
-              }
-            })
-            .catch(collected => {
-              console.log(`Collected ${collected.size} upvotes.`);
-            });
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    } else if (explodeContent[2] === "undefined") {
-      msg.reply("a title is required for submission.");
-    } else if (explodeContent.length <= 3) {
+        message_id: uuid(explodeContent[1].toString(), uuid.URL),
+        clip_url: explodeContent[1].toString(),
+        clip_title: "notneeded"
+      }).then(result => {
+        msg.reply(
+          "this clip has been submitted. Cast your vote type\n\t\t !upvote " +
+            result.message_id
+        );
+      });
+    } else if (explodeContent.length <= 2) {
       msg.reply("to many inputs.\n Please try again.");
     } else {
       msg.reply("this is not a twitch clip.");
@@ -88,7 +42,8 @@ client.on("message", async msg => {
   }
   if (explodeContent[0] === "!submitted") {
     Clips.findAll({
-      limit: 10
+      limit: 10,
+      order: [["reactions", "DESC"]]
     })
       .then(results => {
         results.forEach(result => {
@@ -100,7 +55,9 @@ client.on("message", async msg => {
               " posted by " +
               result.username +
               " \n " +
-              result.clip_url
+              result.clip_url +
+              "\n\t\t to vote type !upvote " +
+              result.message_id
           );
         });
       })
@@ -108,22 +65,29 @@ client.on("message", async msg => {
         msg.reply("No content to display!");
       });
   }
-  if (explodeContent[0] === "!info") {
+  if (explodeContent[0] === "!upvote" && explodeContent[1] !== "undefined") {
+    msg.reply("+1 to clip " + explodeContent[1].toString());
+    Clips.findOne({
+      where: {
+        message_id: explodeContent[1].toString()
+      }
+    })
+      .then(result => {
+        result.update({
+          reactions: (result.reactions += 1)
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+  if (explodeContent[0] === "!contest") {
     msg.reply(
-      "https://github.com/dhurley94/submit-bot-discord \nhttps://blog-dhurley.herokuapp.com/\n\n Usage:\n\t !submit <clip_url> <title>"
+      "\nhttps://github.com/dhurley94/submit-bot-discord\n\n Usage:\n\t !submit <clip_url> \n\t!submitted : will return top 10 clips currently \n\t!upvote <unique_id> will upvote the video"
     );
   }
 });
 
+db.sequelize.sync({ force: true });
+
 client.login(process.env.TOKEN);
-
-db.Clips.belongsTo(db.User);
-db.User.hasMany(db.Clips);
-
-db.sequelize.sync({
-  force: false
-});
-
-app.listen(port, "localhost", () =>
-  console.log(`app listening on port ${port}!`)
-);

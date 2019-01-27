@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       profile_id: {
         type: Sequelize.STRING,
+        unique: true,
         allowNull: false
       },
       clipsPosted: {

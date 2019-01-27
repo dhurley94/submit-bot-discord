@@ -3,8 +3,8 @@
 const Sequelize = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-  var User = sequelize.define(
-    "User",
+  var Users = sequelize.define(
+    "Users",
     {
       id: {
         allowNull: false,
@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       profile_id: {
         type: Sequelize.STRING,
+        unique: true,
         allowNull: false
       },
       clipsPosted: {
@@ -36,8 +37,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {}
   );
-  User.associate = function(models) {
+  Users.associate = function(models) {
     // associations can be defined here
   };
-  return User;
+  return Users;
 };

@@ -6,7 +6,7 @@ var bodyParser = require("body-parser");
 var logger = require("morgan");
 var db = require("./models");
 var Clips = require("./models").Clips;
-var User = require("./models").User;
+var Users = require("./models").Users;
 var JSON = require("circular-json");
 
 var app = express();
@@ -22,6 +22,9 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
+
+Users.belongsTo(Clips);
+Clips.hasOne(Users);
 
 var scopes = ["identify", "email"];
 
@@ -63,18 +66,21 @@ app.get(
     var data =
       res.socket.parser.socket.parser.socket.parser.socket._httpMessage.req
         .session.passport.user;
-
-    User.create({
-      profile_id: data.username
-    })
-      .then(result => {
-        console.log(result);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    res.redirect("/");
-  } // auth success
+    Users.count({
+      where: { profile_id: data.username }
+    }).then(match => {
+      if (match === 0) {
+        Users.create({
+          profile_id: data.username
+        }).catch(err => {
+          console.error(err);
+        });
+        res.redirect("/");
+      } else {
+        res.redirect("/");
+      } // auth success
+    });
+  }
 );
 app.get("/logout", function(req, res) {
   req.logout();
@@ -100,9 +106,58 @@ app.get("/", checkAuth, function(req, res) {
     });
 });
 
-// var indexRouter = require("./routes/index");
-var upvoteRouter = require("./routes/upvote", checkAuth);
-// var authRouter = require("./routes/auth");
+app.get("/upvote/", (req, res) => {
+  res.redirect("http://localhost:3000", 301);
+});
+
+app.get("/upvote/:user_id", function(req, res) {
+  Clips.findOne({
+    where: {
+      id: req.params.user_id
+    }
+  })
+    .then(record => {
+      record.update({
+        reactions: (record.reactions += 1)
+      });
+      Users.findOne({
+        where: { profile_id: record.username }
+      }).then(result => {
+        Users.update({
+          ClipId: result.ClipId + " " + record.clip_url
+        });
+      });
+    })
+    .then(record => {
+      res.redirect("/");
+    });
+  // Users.findAll({
+  //   include: [
+  //     {
+  //       model: Clips
+  //     }
+  //   ]
+  // }).then(users => {
+  //   const resObj = users.map(user => {
+  //     //tidy up the user data
+  //     return Object.assign(
+  //       {},
+  //       {
+  //         username: user.username,
+  //         role: user.role
+  //       }
+  //     );
+  //   });
+  // });
+  // .then(record => {
+  //   record.update({
+  //     reactions: (record.reactions += 1)
+  //   });
+  // })
+  // .then(record => {
+  //   res.redirect("/");
+  // });
+});
 
 function checkAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
